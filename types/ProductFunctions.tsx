@@ -7,6 +7,7 @@ export interface RenderCategoryProps {
     childMap?: any;
     showCount?: boolean;
     level?: number;
+    selectedVariants:any
 }
 
 export interface ProductViewProps {

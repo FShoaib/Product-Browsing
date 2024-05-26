@@ -1,4 +1,4 @@
-import ProductView from "@/components/SelectProductsList";
+import ProductView from "@/components/ProductBrowsing";
 import { getProducts } from "@/constants/Dataset";
 import { StyleSheet, Text, View } from "react-native";
 

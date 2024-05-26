@@ -1,6 +1,6 @@
 import { ProductViewProps, RenderCategoryProps } from '@/types/ProductFunctions';
 import CheckBox from 'expo-checkbox'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
 import getProductTree from './ProductTree';
 
@@ -24,11 +24,17 @@ let levelMap = {
     },
 }
 
-const RenderCategory:React.FC<RenderCategoryProps> = ({ displayName, onCheck, parentKey = '', childMap = {}, showCount = false, level = 1 }) => {
+const RenderCategory:React.FC<RenderCategoryProps> = ({ displayName, onCheck, parentKey = '', childMap = {}, showCount = false, level = 1, selectedVariants = {} }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false)
 
     const isBaseLevel = Array.isArray(childMap)
     const count = isBaseLevel ? childMap.length : Object.keys(childMap).length
+
+    useEffect(()=>{
+        if(Object.keys(selectedVariants).length===0){
+            setToggleCheckBox(false)
+        }
+    },[selectedVariants])
 
     return (
         <>
@@ -40,7 +46,7 @@ const RenderCategory:React.FC<RenderCategoryProps> = ({ displayName, onCheck, pa
                 {(isBaseLevel || showCount) && toggleCheckBox && <Text style={styles.productCounts}>{count} + Devices</Text>}
                 {
                     toggleCheckBox && !isBaseLevel && Object.keys(childMap).length && Object.entries(childMap).map(([key, value], j) => (
-                        <RenderCategory key={j} parentKey={displayName} displayName={key} childMap={value} level={level + 1} onCheck={onCheck} />)
+                        <RenderCategory key={j} parentKey={displayName} displayName={key} childMap={value} level={level + 1} onCheck={onCheck} selectedVariants={selectedVariants} />)
                     )
                 }
             </View>
@@ -99,7 +105,7 @@ const ProductView: React.FC<ProductViewProps>  = ({ productsList}) => {
                     category,
                     brandName,
                     key: category
-                }))} renderItem={({ item }) => <RenderCategory displayName={item.category} childMap={item.brandName} onCheck={saveProduct} />} />
+                }))} renderItem={({ item }) => <RenderCategory displayName={item.category} childMap={item.brandName} onCheck={saveProduct} selectedVariants={selectedVariants} />} />
 
             </View>
             <View style={styles.selectionContainer}>
